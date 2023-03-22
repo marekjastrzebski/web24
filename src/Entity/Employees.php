@@ -2,15 +2,24 @@
 
 namespace App\Entity;
 
-use App\Repository\EmployeesRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[UniqueEntity('email',
-	message: 'Passed email is already in use!')]
 #[ORM\Entity()]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Post(),
+        new Patch(),
+        new Delete(),
+    ]
+)]
 class Employees
 {
 	#[ORM\Id]
@@ -33,11 +42,13 @@ class Employees
 	#[ORM\Column(length: 255, unique: true)]
 	private ?string $email = null;
 
-	#[Assert\Length(min: 9, max: 13,
+	#[Assert\Length(
+        min: 9,
+        max: 13,
 		minMessage: 'Passed phoneNumber is too short',
 		maxMessage: 'Passed phoneNumber is too long')]
 	#[Assert\Type(type: 'numeric',message: 'phoneNumber should be a number')]
-	#[ORM\Column(type: 'string', nullable: true)]
+	#[ORM\Column(type: 'bigint', nullable: true)]
 	private ?string $phoneNumber = null;
 
 	#[ORM\ManyToOne(targetEntity: Companies::class, cascade: ['persist', 'remove'])]
